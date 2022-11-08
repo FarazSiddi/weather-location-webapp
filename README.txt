@@ -1,3 +1,5 @@
+Weather Location WebApp
+
 - Check to make sure MongoDB is open on the default port (27017)
 - Make sure the dependencies for this project had been installed
 - Check the terminal for the login information after the collections setup
