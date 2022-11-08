@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>The Weather Page</title>
+    <!-- JS and CSS Extension Files -->
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.8.0/dist/leaflet.css"
+      integrity="sha512-hoalWLoI8r4UszCkZ5kL8vayOGVae1oxXe/2A4AO6J9+580uKHDO3JdHb7NzwwzK5xr/Fs0W40kiNHxM9vyTtQ=="
+      crossorigin=""
+    />
+    <script
+      src="https://unpkg.com/leaflet@1.8.0/dist/leaflet.js"
+      integrity="sha512-BB3hKbKWOc9Ez/TAwyWxNXeoV9c1v6FIeYiBieIWkpLjauysF18NzgR1MBNBXf8/KABdlkX68nAhlwcDFLGPCQ=="
+      crossorigin=""
+    ></script>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      type="text/css"
+    />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+      $(document).ready(function () {
+        var map;
+        var links = [
+          "http://api.openweathermap.org/data/2.5/weather?q=Toronto,ca&APPID=33bf2d31bdc957ffb17e46fbe9c28344",
+          "http://api.openweathermap.org/data/2.5/weather?q=Manhattan,us&APPID=33bf2d31bdc957ffb17e46fbe9c28344",
+          "http://api.openweathermap.org/data/2.5/weather?zip=20000-000,br&APPID=33bf2d31bdc957ffb17e46fbe9c28344",
+          "http://api.openweathermap.org/data/2.5/weather?q=Montevideo,uy&APPID=33bf2d31bdc957ffb17e46fbe9c28344",
+          "http://api.openweathermap.org/data/2.5/weather?q=Paris,fr&APPID=33bf2d31bdc957ffb17e46fbe9c28344",
+          "http://api.openweathermap.org/data/2.5/weather?q=Berlin,de&APPID=33bf2d31bdc957ffb17e46fbe9c28344",
+          "http://api.openweathermap.org/data/2.5/weather?q=Rome,it&APPID=33bf2d31bdc957ffb17e46fbe9c28344",
+          "http://api.openweathermap.org/data/2.5/weather?q=Cairo,eg&APPID=33bf2d31bdc957ffb17e46fbe9c28344",
+          "http://api.openweathermap.org/data/2.5/weather?q=Seoul,kr&APPID=33bf2d31bdc957ffb17e46fbe9c28344",
+          "http://api.openweathermap.org/data/2.5/weather?q=Shanghai,cn&APPID=33bf2d31bdc957ffb17e46fbe9c28344",
+          "http://api.openweathermap.org/data/2.5/weather?q=Tokyo,jp&APPID=33bf2d31bdc957ffb17e46fbe9c28344",
+        ];
+
+        map = L.map("map");
+        L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+          maxZoom: 19,
+          attribution: "© OpenStreetMap",
+        }).addTo(map);
+
+        for (i = 0; i < links.length; i++) {
+          getData(links[i]);
+        }
+
+        // Loads the map after half a second
+        setTimeout(function () {
+          map.setView([43.7001, -79.4163], 5);
+        }, 500);
+
+        function getData(link) {
+          $.ajax({
+            url: link,
+            dataType: "json",
+            success: function (data) {
+              // console.log(data);
+              insertData(data);
+            },
+          });
+        }
+
+        function insertData(data) {
+          // Extract each value assigned to each key in the data object (except for latitude and longitude)
+          var city = data["name"];
+
+          var country = data["sys"];
+          country = country["country"];
+
+          var weather = data["weather"];
+          weather = weather["0"];
+          weather = weather["description"];
+
+          var temp, feelsLike, humidity;
+
+          temp = feelsLike = humidity = data["main"];
+
+          temp = temp["temp"];
+          temp = (Math.round((temp - 273.15) * 10) / 10).toFixed(1);
+          feelsLike = feelsLike["feels_like"];
+          feelsLike = (Math.round((feelsLike - 273.15) * 10) / 10).toFixed(1);
+          humidity = humidity["humidity"];
+
+          var windSpeed = data["wind"];
+          windSpeed = windSpeed["speed"];
+
+          // console.log(
+          //   `${city}, ${country}, Weather: ${weather}, Temp: ${temp}, Feels Like: ${feelsLike}, Humidity: ${humidity}, Wind Speed: ${windSpeed}`
+          // );
+
+          // Generate a table row
+          var tableRow = `
+                <tr>
+                  <th scope="row">${city}, ${country}</th>
+                  <td>${weather}</td>
+                  <td>${temp}&#8451;</td>
+                  <td>${feelsLike}&#8451;</td>
+                  <td>${humidity}%</td>
+                  <td>${windSpeed} km/h</td>
+                </tr>
+                `;
+
+          // Insert the generated row into the html document
+          var insertedRow = $("tbody").append(tableRow);
+
+          // Now extract the values of latitude and longitude from the data object and assign them to the two variables below
+          var longitude, latitude;
+          longitude = latitude = data["coord"];
+          longitude = longitude["lon"];
+          latitude = latitude["lat"];
+
+          // Use these two variables to plot markers and popups
+          var marker = L.marker([latitude, longitude]).addTo(map);
+          marker
+            .bindPopup(
+              `<b>${city}</b><br>Weather: ${weather}<br>Temperature: ${temp}&#8451;<br>Feels Like: ${feelsLike}&#8451;<br>Humidity: ${humidity}%<br>Wind Speed: ${windSpeed} km/h`
+            )
+            .openPopup();
+        }
+      });
+    </script>
+    <!-- End of JS and CSS Extensions Section -->
+  </head>
+  <body class="bg-dark">
+    <div id="student-info" class="ms-4 mt-3 text-light">
+      <h6>Faraz Siddiqui<br />501042014<br />CCPS 530</h6>
+    </div>
+    <h1 class="title top m-1 p-2 mb-3 text-center text-primary">
+      The Global Weather Page
+    </h1>
+    <div id="map" style="height: 500px"></div>
+    <div id="weather-table" class="mb-1">
+      <table class="table table-dark table-striped">
+        <thead>
+          <tr>
+            <th scope="col">City</th>
+            <th scope="col">Weather</th>
+            <th scope="col">Temperature</th>
+            <th scope="col">Feels Like</th>
+            <th scope="col">Humidity</th>
+            <th scope="col">Wind Speed</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </body>
+</html>
