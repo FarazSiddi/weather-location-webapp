@@ -1,6 +1,6 @@
 Weather Location WebApp
 
-This is an application that I had made to showcase my abilities in utilizing API services and a basic login system. This web application uses Bootstrap, Express.js, node.js, and MongoDB.
+This is an application that I had made to showcase my abilities in utilizing API services and a basic login system. This web application uses BootStrap, Express.js, node.js, and MongoDB.
 
 INSTRUCTIONS:
 
