@@ -7,8 +7,8 @@ INSTRUCTIONS:
 - Check to make sure MongoDB is open on the default port (27017)
 - Make sure the dependencies for this project had been installed
 - Check the terminal for the login information after the collections setup
-- Change directory to the FarazSiddiqui-FinalProject folder and type "node server.js" in the same terminal
-- When running server.js for the first time, the file will create a new collection called finalProject, which will
+- Change directory to the "weather-location-webapp" folder and type "node server.js" in the same terminal
+- When running server.js for the first time, the file will create a new collection called "accounts", which will
   contain an admin login in the format {"email": root@admin.com, "password": ryerson123}. If this collection is
   already made, it will skip the collection creation part of the code and you will have to use the existing login
   information that will be compatible with the email and password format of the code. If the indexes are not in
